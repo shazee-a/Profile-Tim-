@@ -4,39 +4,46 @@
  * ============================================================
  * Halaman pertama yang tampil saat aplikasi dibuka. File ini
  * hanya MENYUSUN bagian-bagian:
- *   Hiasan latar  →  judul (Header)  →  judul bagian  →  kartu 4 anggota
+ *   Hiasan latar  →  Header (kertas robek)  →  judul bagian  →  kartu
+ *
+ * Tata letak:
+ *   - Header dibuat SELEBAR LAYAR (agar kertasnya penuh).
+ *   - Judul bagian + kartu berada di dalam kolom berlebar `lebarIsi`
+ *     (dihitung grid.ts): 2 kolom di HP, 4 kolom di layar lebar.
  *
  * Interaksi di halaman ini:
  *   - scrollY  : mencatat posisi gulir, dikirim ke LatarDekorasi
- *                agar lingkaran hiasan bergeser pelan saat digulir
  *   - FadeInUp : tiap kartu muncul satu per satu dari bawah
  *
  * Data diri TIDAK ada di sini. Data diri ada di file masing-masing
- * anggota di components/members/. Urutan kartu bisa ditukar dengan
- * memindahkan barisnya (ingat ubah angka `urutan` agar tetap 0,1,2,3).
+ * anggota di components/members/.
  *
  * Catatan: alamat import memakai '../../' karena file ini ada di
  * src/app/, sedangkan folder components ada di luar src/.
  */
 import { useRef } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Animated, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import FadeInUp from '../../components/FadeInUp';
+import { hitungGrid } from '../../components/grid';
 import Header from '../../components/Header';
 import LatarDekorasi from '../../components/LatarDekorasi';
 import ProfilFadli from '../../components/members/ProfilFadli';
 import ProfilShaquilla from '../../components/members/ProfilShaquilla';
 import ProfilZain from '../../components/members/ProfilZain';
 import ProfilZaky from '../../components/members/ProfilZaky';
-import { UKURAN, WARNA } from '../../components/theme';
+import { WARNA } from '../../components/theme';
 
 export default function Index() {
   // scrollY = posisi gulir halaman (0 di paling atas, makin besar ke bawah)
   const scrollY = useRef(new Animated.Value(0)).current;
+  const { width } = useWindowDimensions();
+  const { lebarIsi } = hitungGrid(width);
 
   return (
-    <SafeAreaView style={styles.layar} edges={['top']}>
-      {/* ===== HIASAN LATAR BELAKANG (diletakkan paling awal = paling belakang) ===== */}
+    // View biasa (bukan SafeAreaView) agar kertas Header bisa sampai ke tepi atas layar.
+    // Jarak status bar di HP ditangani oleh Header.tsx.
+    <View style={styles.layar}>
+      {/* ===== HIASAN LATAR BELAKANG (paling awal = paling belakang) ===== */}
       <LatarDekorasi scrollY={scrollY} />
 
       <Animated.ScrollView
@@ -48,21 +55,21 @@ export default function Index() {
           { useNativeDriver: true }
         )}
       >
-        <View style={styles.wadah}>
-          {/* ===== JUDUL ===== */}
-          <Header
-            namaTim="Kelompok 5"
-            subJudul="Mata Kuliah"
-            judul="Pemrograman Mobile"
-          />
+        {/* ===== JUDUL (selebar layar) ===== */}
+        <Header
+          namaTim="Kelompok 5"
+          subJudul="Mata Kuliah"
+          judul="Pemrograman Mobile"
+        />
 
-          {/* ===== JUDUL BAGIAN ===== */}
+        {/* ===== KOLOM ISI (rata tengah) ===== */}
+        <View style={{ width: lebarIsi, alignSelf: 'center' }}>
           <View style={styles.barisJudul}>
             <Text style={styles.judulBagian}>Anggota Tim</Text>
             <Text style={styles.petunjuk}>Tekan kartu untuk melihat profil</Text>
           </View>
 
-          {/* ===== GRID KARTU (flexWrap = turun ke baris baru) ===== */}
+          {/* Grid kartu (flexWrap = turun ke baris baru bila tidak muat) */}
           <View style={styles.grid}>
             <FadeInUp urutan={0}><ProfilFadli /></FadeInUp>
             <FadeInUp urutan={1}><ProfilShaquilla /></FadeInUp>
@@ -73,16 +80,14 @@ export default function Index() {
           <Text style={styles.kaki}>Dibuat dengan React Native + Expo</Text>
         </View>
       </Animated.ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   layar: { flex: 1, backgroundColor: WARNA.latar },
-  isi: { padding: UKURAN.jarak, paddingBottom: 40 },
-  // wadah: membatasi lebar maksimal 500 agar rapi di layar web yang lebar
-  wadah: { width: '100%', maxWidth: 500, alignSelf: 'center' },
-  barisJudul: { marginBottom: 14 },
+  isi: { paddingBottom: 40 },
+  barisJudul: { marginTop: 8, marginBottom: 14 },
   judulBagian: { fontSize: 24, fontWeight: '800', color: WARNA.teks },
   petunjuk: { fontSize: 13, color: WARNA.teksPudar, marginTop: 2 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },

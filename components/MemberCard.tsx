@@ -2,19 +2,20 @@
  * ============================================================
  * MemberCard.tsx  —  KARTU ANGGOTA GAYA PORTFOLIO
  * ============================================================
- * Satu kartu = foto (persegi panjang bersudut membulat) + nama
- * + peran dengan IKON di sampingnya + tombol "Lihat Profil".
- * Komponen ini hanya "cetakan"; isinya dikirim dari file milik
- * tiap anggota di components/members/.
+ * Satu kartu = foto + nama + peran (dengan IKON) + tombol
+ * "Lihat Profil". Komponen ini hanya "cetakan"; isinya dikirim
+ * dari file milik tiap anggota di components/members/.
  *
  * IKON PERAN dipilih otomatis dari tulisan peran:
  *   - mengandung "backend"  → ikon server
  *   - mengandung "frontend" → ikon jendela browser
  *   - selain itu            → ikon orang
- * Jadi cukup isi `peran: 'Backend Developer'` di file anggota.
+ *
+ * Ukuran kartu dihitung oleh grid.ts: 2 kolom di HP, 4 kolom di
+ * layar lebar (web).
  *
  * Interaktif: saat kartu ditekan, kartu mengecil sedikit lalu
- * memantul kembali (animasi pegas) sebelum pop-up terbuka.
+ * memantul kembali (animasi pegas).
  *
  * Props:
  *  - foto    : gambar (hasil require('...'))
@@ -28,7 +29,8 @@ import {
   Animated, Image, ImageSourcePropType, Pressable,
   StyleSheet, Text, useWindowDimensions, View,
 } from 'react-native';
-import { UKURAN, WARNA } from './theme';
+import { hitungGrid, JARAK_KARTU } from './grid';
+import { WARNA } from './theme';
 
 type MemberCardProps = {
   foto: ImageSourcePropType;
@@ -47,15 +49,10 @@ function pilihIkon(peran: string): NamaIkon {
   return 'person-outline';
 }
 
-const JARAK_KARTU = 12; // jarak antar dua kartu dalam satu baris
-
 export default function MemberCard({ foto, nama, peran, onPress }: MemberCardProps) {
-  // ---------- UKURAN (angka pasti, dihitung dari lebar layar) ----------
-  // Lebar area isi = lebar layar dikurangi tepi kiri-kanan, maksimal 500
-  // (sama dengan wadah di src/app/index.tsx, supaya kartu pas memenuhi baris).
+  // ---------- UKURAN (angka pasti, dihitung oleh grid.ts) ----------
   const { width } = useWindowDimensions();
-  const lebarIsi = Math.min(width - UKURAN.jarak * 2, 500);
-  const lebarKartu = (lebarIsi - JARAK_KARTU) / 2;
+  const { lebarKartu } = hitungGrid(width);
   const lebarFoto = lebarKartu - 16;      // dikurangi padding kartu (8 x 2)
   const tinggiFoto = lebarFoto * 1.25;    // perbandingan 4:5
 
@@ -102,15 +99,15 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 8,
     marginBottom: JARAK_KARTU,
-    // bayangan lembut (iOS pakai shadow*, Android pakai elevation)
-    shadowColor: WARNA.utama,
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 4,
+    // bayangan tegas (iOS pakai shadow*, Android pakai elevation)
+    shadowColor: '#3B2A1E',
+    shadowOpacity: 0.28,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 10,
   },
   foto: {
-    borderRadius: 16,                 // sudut membulat biasa
+    borderRadius: 16,
     backgroundColor: WARNA.garis,
   },
   nama: {
