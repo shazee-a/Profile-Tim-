@@ -28,7 +28,7 @@ const profil: ProfilAnggota = {
   deskripsi:
     'Dalam Group ini saya bertugas disisi backend, bertanggung jawab untuk membuat API dan menghubungkan database dengan aplikasi mobile. Saya juga bertugas untuk membuat dokumentasi API agar memudahkan anggota lain dalam menggunakan API yang saya buat.',
   hobi: 'Tulis hobi di sini',
-  skill: ['Skill 1', 'Skill 2', 'Skill 3'],
+  KeahlianDanFokusProjek: ['Skill 1', 'Skill 2', 'Skill 3'],
   foto: require('../../assets/images/fadli.png'),
   video: null,
   // video: require('../../assets/videos/fadli.mp4'),

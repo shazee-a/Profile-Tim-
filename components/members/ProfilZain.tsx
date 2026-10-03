@@ -28,7 +28,7 @@ const profil: ProfilAnggota = {
   deskripsi:
     'Tulis deskripsi diri Zain di sini, 2-3 kalimat. Misalnya asal, jurusan, dan tujuan belajar.',
   hobi: 'Tulis hobi di sini',
-  skill: ['Skill 1', 'Skill 2', 'Skill 3'],
+  KeahlianDanFokusProjek: ['Skill 1', 'Skill 2', 'Skill 3'],
   foto: require('../../assets/images/zain.png'),
   video: null,
   // video: require('../../assets/videos/zain.mp4'),

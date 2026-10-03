@@ -24,11 +24,11 @@ import MemberDetailModal, { ProfilAnggota } from '../MemberDetailModal';
 // ======================= A. DATA DIRI =======================
 const profil: ProfilAnggota = {
   nama: 'Shaquilla',
-  peran: 'Peran Shaquilla', // TODO: ganti dengan peran sebenarnya
+  peran: 'Backend Developer', // TODO: ganti dengan peran sebenarnya
   deskripsi:
     'Tulis deskripsi diri Shaquilla di sini, 2-3 kalimat. Misalnya asal, jurusan, dan tujuan belajar.',
   hobi: 'Tulis hobi di sini',
-  skill: ['Skill 1', 'Skill 2', 'Skill 3'],
+  KeahlianDanFokusProjek: ['Skill 1', 'Skill 2', 'Skill 3'],
   foto: require('../../assets/images/shaquilla.png'),
   video: null,
   // video: require('../../assets/videos/shaquilla.mp4'),

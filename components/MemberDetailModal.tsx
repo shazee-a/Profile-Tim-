@@ -31,7 +31,7 @@ export type ProfilAnggota = {
   peran: string;
   deskripsi: string;
   hobi: string;
-  skill: string[];
+  KeahlianDanFokusProjek: string[];
   foto: ImageSourcePropType;
   video: number | null; // isi null jika video belum ada
 };
@@ -81,9 +81,9 @@ export default function MemberDetailModal({ tampil, onTutup, profil }: Props) {
             <Text style={styles.label}>Hobi</Text>
             <Text style={styles.teks}>{profil.hobi}</Text>
 
-            <Text style={styles.label}>Skill</Text>
+            <Text style={styles.label}>Keahlian Dan Fokus Projek</Text>
             <View style={styles.baris}>
-              {profil.skill.map((s) => (
+              {profil.KeahlianDanFokusProjek.map((s) => (
                 <View key={s} style={styles.lencana}>
                   <Text style={styles.teksLencana}>{s}</Text>
                 </View>
