@@ -2,21 +2,22 @@
  * ============================================================
  * theme.ts  —  WARNA & UKURAN YANG DIPAKAI BERSAMA
  * ============================================================
- * Tema "portfolio hangat": krem (beige) + cokelat espresso +
- * aksen karamel. Semua warna ada di sini, jadi kalau tim mau
- * mengganti tema cukup ubah nilai di file ini saja.
+ * Tema "poster monokrom": abu-abu muda + hitam + satu warna
+ * merah menyala sebagai aksen (mengikuti desain referensi).
+ * Semua warna ada di sini, jadi kalau tim mau mengganti tema
+ * cukup ubah nilai di file ini saja.
  */
 export const WARNA = {
-  utama: '#3B2A1E',      // cokelat espresso (tombol, judul kecil)
-  utamaGelap: '#241810', // versi lebih gelap
-  aksen: '#C98B5B',      // karamel (hiasan, tulisan miring, ikon)
-  latar: '#F4EDE1',      // krem beige (latar halaman)
-  kartu: '#FFFFFF',      // latar kartu anggota
-  kertas: '#FFFCF5',     // putih kertas hangat (latar judul "kertas robek")
-  teks: '#2B2118',       // teks utama (cokelat sangat gelap)
+  utama: '#0B0B0B',      // hitam (teks utama, tombol, label)
+  utamaGelap: '#000000', // hitam pekat
+  aksen: '#FF1236',      // merah menyala (batang merah, tag, ikon)
+  latar: '#DCDCDC',      // abu-abu muda (latar halaman)
+  kartu: '#FFFFFF',      // putih (bingkai kartu, pop-up)
+  kertas: '#FFFFFF',     // (cadangan, tidak dipakai lagi)
+  teks: '#0B0B0B',       // teks utama
   teksPutih: '#FFFFFF',  // teks di atas warna gelap
-  teksPudar: '#7A6A58',  // teks keterangan
-  garis: '#E6D8C0',      // beige muda (tepi kertas, lencana, pemisah)
+  teksPudar: '#6F6F6F',  // teks keterangan
+  garis: '#CFCFCF',      // abu-abu (lencana, pemisah, cincin tulisan)
 };
 
 export const UKURAN = {

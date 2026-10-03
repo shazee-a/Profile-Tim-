@@ -1,35 +1,31 @@
 /**
  * ============================================================
- * MemberCard.tsx  —  KARTU ANGGOTA GAYA PORTFOLIO
+ * MemberCard.tsx  —  KARTU ANGGOTA UNTUK RODA
  * ============================================================
- * Satu kartu = foto + nama + peran (dengan IKON) + tombol
- * "Lihat Profil". Komponen ini hanya "cetakan"; isinya dikirim
- * dari file milik tiap anggota di components/members/.
+ * Kartu bergaya poster: foto memenuhi kartu, bingkai putih, tag
+ * merah "↗" di pojok, dan bilah hitam di bawah berisi NAMA dan
+ * PERAN (dengan ikon). Kartu ini ditaruh di roda oleh
+ * RodaKartu.tsx; menekannya membuka pop-up profil.
  *
  * IKON PERAN dipilih otomatis dari tulisan peran:
  *   - mengandung "backend"  → ikon server
  *   - mengandung "frontend" → ikon jendela browser
  *   - selain itu            → ikon orang
  *
- * Ukuran kartu dihitung oleh grid.ts: 2 kolom di HP, 4 kolom di
- * layar lebar (web).
- *
- * Interaktif: saat kartu ditekan, kartu mengecil sedikit lalu
- * memantul kembali (animasi pegas).
- *
- * Props:
+ * Props (sama seperti sebelumnya, file anggota tidak perlu diubah):
  *  - foto    : gambar (hasil require('...'))
  *  - nama    : nama anggota
  *  - peran   : jabatan/peran di tim
- *  - onPress : fungsi yang dijalankan saat kartu/tombol ditekan
+ *  - onPress : fungsi yang dijalankan saat kartu ditekan
+ *
+ * Ukuran kartu dihitung oleh roda.ts.
  */
 import { Ionicons } from '@expo/vector-icons';
-import { useRef } from 'react';
 import {
-  Animated, Image, ImageSourcePropType, Pressable,
-  StyleSheet, Text, useWindowDimensions, View,
+  Image, ImageSourcePropType, Pressable, StyleSheet,
+  Text, useWindowDimensions, View,
 } from 'react-native';
-import { hitungGrid, JARAK_KARTU } from './grid';
+import { ukuranRoda } from './Roda';
 import { WARNA } from './theme';
 
 type MemberCardProps = {
@@ -50,82 +46,62 @@ function pilihIkon(peran: string): NamaIkon {
 }
 
 export default function MemberCard({ foto, nama, peran, onPress }: MemberCardProps) {
-  // ---------- UKURAN (angka pasti, dihitung oleh grid.ts) ----------
   const { width } = useWindowDimensions();
-  const { lebarKartu } = hitungGrid(width);
-  const lebarFoto = lebarKartu - 16;      // dikurangi padding kartu (8 x 2)
-  const tinggiFoto = lebarFoto * 1.25;    // perbandingan 4:5
-
-  // ---------- ANIMASI TEKAN (mengecil lalu memantul) ----------
-  const skala = useRef(new Animated.Value(1)).current;
-  const animasi = (ke: number) =>
-    Animated.spring(skala, { toValue: ke, friction: 6, useNativeDriver: true }).start();
+  const { lebarKartu, tinggiKartu } = ukuranRoda(width);
 
   return (
-    <Animated.View style={[styles.kartu, { width: lebarKartu, transform: [{ scale: skala }] }]}>
-      <Pressable
-        onPress={onPress}
-        onPressIn={() => animasi(0.95)}
-        onPressOut={() => animasi(1)}
-      >
-        {/* BAGIAN 1: FOTO */}
-        <Image
-          source={foto}
-          resizeMode="cover"
-          style={[styles.foto, { width: lebarFoto, height: tinggiFoto }]}
-        />
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.kartu,
+        { width: lebarKartu, height: tinggiKartu },
+        pressed && { opacity: 0.85 },
+      ]}
+    >
+      {/* FOTO memenuhi seluruh kartu */}
+      <Image source={foto} resizeMode="cover" style={StyleSheet.absoluteFill} />
 
-        {/* BAGIAN 2: NAMA */}
-        <Text style={styles.nama} numberOfLines={1}>{nama}</Text>
+      {/* TAG MERAH di pojok kanan atas (petunjuk bahwa kartu bisa ditekan) */}
+      <View style={styles.tag}>
+        <Text style={styles.teksTag}>↗</Text>
+      </View>
 
-        {/* BAGIAN 3: PERAN = ikon + teks (tanpa latar) */}
+      {/* BILAH HITAM di bawah: nama + peran */}
+      <View style={styles.bilah}>
+        <Text style={[styles.nama, { fontSize: lebarKartu * 0.1 }]} numberOfLines={1}>
+          {nama.toUpperCase()}
+        </Text>
         <View style={styles.barisPeran}>
-          <Ionicons name={pilihIkon(peran)} size={15} color={WARNA.aksen} />
+          <Ionicons name={pilihIkon(peran)} size={13} color={WARNA.aksen} />
           <Text style={styles.teksPeran} numberOfLines={1}>{peran}</Text>
         </View>
-
-        {/* BAGIAN 4: TOMBOL */}
-        <View style={styles.tombol}>
-          <Text style={styles.teksTombol}>Lihat Profil  ↗</Text>
-        </View>
-      </Pressable>
-    </Animated.View>
+      </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   kartu: {
-    backgroundColor: WARNA.kartu,
-    borderRadius: 24,
-    padding: 8,
-    marginBottom: JARAK_KARTU,
-    // bayangan tegas (iOS pakai shadow*, Android pakai elevation)
-    shadowColor: '#3B2A1E',
-    shadowOpacity: 0.28,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 10,
-  },
-  foto: {
-    borderRadius: 16,
+    borderRadius: 18,
+    overflow: 'hidden',            // foto mengikuti sudut membulat
+    borderWidth: 3,
+    borderColor: WARNA.kartu,      // bingkai putih
     backgroundColor: WARNA.garis,
+    elevation: 6,                  // bayangan di Android
   },
-  nama: {
-    fontSize: 16, fontWeight: '800', color: WARNA.teks,
-    marginTop: 10, paddingHorizontal: 4,
+  tag: {
+    position: 'absolute', top: 8, right: 8,
+    width: 28, height: 28, borderRadius: 8,
+    backgroundColor: WARNA.aksen,
+    alignItems: 'center', justifyContent: 'center',
   },
-  barisPeran: {
-    flexDirection: 'row',             // ikon di KIRI, teks di KANAN
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 4,
-    paddingHorizontal: 4,
+  teksTag: { color: WARNA.teksPutih, fontWeight: '900', fontSize: 14 },
+  bilah: {
+    position: 'absolute', left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(11,11,11,0.78)',
+    paddingVertical: 8, paddingHorizontal: 10,
   },
-  teksPeran: { flexShrink: 1, fontSize: 12, color: WARNA.teksPudar, fontWeight: '600' },
-  tombol: {
-    backgroundColor: WARNA.utama,
-    paddingVertical: 9, borderRadius: 20,
-    alignItems: 'center', marginTop: 10,
-  },
-  teksTombol: { color: WARNA.teksPutih, fontWeight: '700', fontSize: 12 },
+  nama: { color: WARNA.teksPutih, fontWeight: '900', letterSpacing: 1 },
+  barisPeran: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2 },
+  teksPeran: { flexShrink: 1, color: '#DADADA', fontSize: 11, fontWeight: '600' },
 });

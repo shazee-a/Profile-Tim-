@@ -1,124 +1,141 @@
 /**
  * ============================================================
- * Header.tsx  —  JUDUL HALAMAN DI ATAS KOLASE KERTAS ROBEK
+ * Header.tsx  —  HERO GAYA POSTER (JUDUL RAKSASA + BATANG MERAH)
  * ============================================================
- * Blok ini selebar LAYAR PENUH (tanpa batas samping), sehingga
- * kertas robek di belakangnya menyentuh tepi kiri dan kanan layar
- * di web maupun Android.
+ * Mengikuti desain referensi:
+ *   - kiri atas  : sapaan kecil huruf kapital ("WELCOME TO OUR TEAM")
+ *   - kanan atas : logo bulat kecil
+ *   - tengah     : JUDUL RAKSASA, dengan batang merah tegak di
+ *                  belakangnya dan "bayangan" judul yang bergeser
+ *                  kiri-kanan pelan (animasi)
+ *   - bawah      : dua teks kecil (kiri dan kanan)
+ *   - tanda "+"  : penanda kecil di sudut seperti garis bantu poster
  *
- * Isi: nama tim, tulisan miring, dan judul besar.
- *   - LAYAR LEBAR (web) : teks berada di TENGAH dan lebih besar.
- *   - LAYAR SEMPIT (HP) : teks rata kiri, sejajar dengan kartu.
- * Di belakang teks ada 3 lembar kertas robek bertumpuk dengan
- * warna berbeda (tepi bawah yang robek), lalu hiasan kertas
- * (DekorasiKertas.tsx) supaya kertas tidak terlihat kosong.
- *
- * Di HP, bagian atas diberi jarak seukuran status bar (jam &
- * baterai) supaya tulisan tidak tertutup, sementara kertasnya
- * tetap naik sampai ke tepi atas layar.
+ * Ukuran judul menyesuaikan lebar layar (web maupun HP).
+ * Di HP, bagian atas diberi jarak seukuran status bar.
  *
  * Props:
- *  - namaTim  : teks kecil di atas judul (contoh: "Kelompok 5")
- *  - subJudul : tulisan miring (contoh: "Mata Kuliah")
- *  - judul    : judul besar (contoh: "Pemrograman Mobile")
- *
- * PENGATURAN (di bawah): LAPISAN = daftar lembar kertas
- * (warna, kemiringan dalam derajat, seberapa jauh menyembul ke bawah).
+ *  - sapaan    : teks kecil kiri atas (boleh 2 baris, pakai \n)
+ *  - judul     : judul raksasa (contoh: "PORTFOLIO")
+ *  - kiriBawah : teks kecil kiri bawah (contoh: "KELOMPOK 5")
+ *  - kananBawah: teks kecil kanan bawah (contoh: "PEMROGRAMAN MOBILE")
  */
-import { useState } from 'react';
-import { LayoutChangeEvent, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, Easing, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import DekorasiKertas from './DekorasiKertas';
-import { hitungGrid } from './grid';
-import KertasRobek from './KertasRobek';
-import { WARNA } from './theme';
-
-const ATAS_EKSTRA = 120;   // kertas dilebihkan ke atas (terpotong tepi layar) agar tidak ada celah
-const LUAR_SISI = 40;      // kertas melebar keluar layar kiri-kanan (menghindari celah saat miring)
-const NAPAS_BAWAH = 26;    // jarak teks ke tepi robek kertas depan
-const RUANG_GIGI = 90;     // ruang di bawah kertas untuk gerigi sobekan
-
-/** Lembar kertas, dari yang PALING BELAKANG ke yang PALING DEPAN */
-const LAPISAN = [
-  // cokelat muda (kertas kraft): paling belakang, menyembul paling jauh ke bawah
-  { warna: '#D8B787', serat: '#C29B66', benih: 11, derajat: 1.4, tambahBawah: 28 },
-  // peach/karamel muda: di tengah
-  { warna: '#EDCDAA', serat: '#DDB68F', benih: 5, derajat: -1.6, tambahBawah: 14 },
-  // putih kertas: paling depan, tempat teks berada
-  { warna: WARNA.kertas, serat: WARNA.garis, benih: 7, derajat: -0.6, tambahBawah: 0 },
-];
+import { UKURAN, WARNA } from './theme';
 
 type HeaderProps = {
-  namaTim: string;
-  subJudul: string;
+  sapaan: string;
   judul: string;
+  kiriBawah: string;
+  kananBawah: string;
 };
 
-export default function Header({ namaTim, subJudul, judul }: HeaderProps) {
-  const { width: lebarLayar } = useWindowDimensions();
+export default function Header({ sapaan, judul, kiriBawah, kananBawah }: HeaderProps) {
+  const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();               // tinggi status bar di HP (0 di web)
-  const { lebarIsi, kolom } = hitungGrid(lebarLayar);
-  const tengah = kolom >= 4;                        // true = layar lebar (web) → teks di tengah
 
-  // ukuran blok header (diukur otomatis; berubah saat layar diputar/diubah ukurannya)
-  const [ukuran, setUkuran] = useState({ w: 0, h: 0 });
-  const saatDiukur = (e: LayoutChangeEvent) =>
-    setUkuran({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height });
+  // lebar area isi dan ukuran judul (dibatasi agar tidak terlalu raksasa di web)
+  const lebarIsi = Math.min(width - UKURAN.jarak * 2, 1100);
+  const ukuranJudul = Math.min(lebarIsi / 7.2, 150);
+  const tinggiJudul = ukuranJudul * 1.1;
 
-  // Di layar lebar, kemiringan diperkecil agar ujung kertas tidak terlalu naik-turun
-  const faktorMiring = ukuran.w > 0 ? Math.min(1, 700 / ukuran.w) : 1;
+  // ---------- ANIMASI "BAYANGAN" JUDUL (bergeser kiri-kanan) ----------
+  const geser = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    const animasi = Animated.loop(
+      Animated.sequence([
+        Animated.timing(geser, { toValue: 1, duration: 2400, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(geser, { toValue: 0, duration: 2400, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      ])
+    );
+    animasi.start();
+    return () => animasi.stop();
+  }, [geser]);
+  const geserX = geser.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-ukuranJudul * 0.09, ukuranJudul * 0.09],
+  });
+
+  // gaya teks judul (dipakai oleh judul utama dan bayangannya)
+  const gayaJudul = {
+    fontSize: ukuranJudul,
+    lineHeight: tinggiJudul,
+    letterSpacing: ukuranJudul * 0.01,
+  };
 
   return (
-    <View
-      onLayout={saatDiukur}
-      style={[
-        styles.wadah,
-        { paddingTop: insets.top + 36, paddingBottom: RUANG_GIGI + NAPAS_BAWAH },
-      ]}
-    >
-      {/* KERTAS-KERTAS (digambar lebih dulu = berada di belakang teks) */}
-      {ukuran.w > 0 &&
-        LAPISAN.map((l, i) => (
-          <KertasRobek
-            key={i}
-            lebar={ukuran.w + LUAR_SISI * 2}
-            // tepi bawah badan kertas = tinggi blok dikurangi ruang gerigi (+ tambahan per lembar)
-            tinggi={ATAS_EKSTRA + ukuran.h - RUANG_GIGI + l.tambahBawah}
-            warna={l.warna}
-            warnaSerat={l.serat}
-            benih={l.benih}
-            miring={`${l.derajat * faktorMiring}deg`}
-            style={{ left: -LUAR_SISI, top: -ATAS_EKSTRA }}
+    <View style={[styles.wadah, { paddingTop: insets.top + 20 }]}>
+      <View style={{ width: lebarIsi, alignSelf: 'center' }}>
+        {/* ----- TANDA "+" di sudut atas ----- */}
+        <Text style={[styles.plus, { left: 0, top: 0 }]}>+</Text>
+        <Text style={[styles.plus, { left: '32%', top: 0 }]}>+</Text>
+        <Text style={[styles.plus, { right: 0, top: 0 }]}>+</Text>
+
+        {/* ----- BARIS ATAS: sapaan + logo ----- */}
+        <View style={styles.barisAtas}>
+          <Text style={styles.sapaan}>{sapaan}</Text>
+          {/* Logo bulat: cincin hitam + titik di tengah */}
+          <View style={styles.logoLuar}>
+            <View style={styles.logoDalam} />
+          </View>
+        </View>
+
+        {/* ----- JUDUL RAKSASA ----- */}
+        <View style={[styles.areaJudul, { height: tinggiJudul }]}>
+          {/* Batang merah tegak di belakang judul */}
+          <View
+            style={[
+              styles.batang,
+              { width: lebarIsi * 0.17, height: tinggiJudul + 84, top: -42, left: lebarIsi * 0.415 },
+            ]}
           />
-        ))}
+          {/* "Bayangan" judul yang bergeser */}
+          <Animated.Text
+            numberOfLines={1}
+            style={[styles.judul, gayaJudul, styles.bayangan, { transform: [{ translateX: geserX }, { scaleY: 0.8 }] }]}
+          >
+            {judul}
+          </Animated.Text>
+          {/* Judul utama */}
+          <Text numberOfLines={1} style={[styles.judul, gayaJudul]}>
+            {judul}
+          </Text>
+        </View>
 
-      {/* HIASAN DI ATAS KERTAS (di belakang teks) */}
-      {ukuran.w > 0 && (
-        <DekorasiKertas lebar={ukuran.w} tinggi={ukuran.h - RUANG_GIGI - 8} />
-      )}
+        {/* ----- BARIS BAWAH: dua teks kecil ----- */}
+        <View style={styles.barisBawah}>
+          <Text style={styles.kecil}>{kiriBawah}</Text>
+          <Text style={styles.kecil}>{kananBawah}</Text>
+        </View>
 
-      {/* TEKS JUDUL: selebar kolom isi dan di tengah layar.
-          Di layar lebar, isi teksnya juga rata tengah. */}
-      <View style={{ width: lebarIsi, alignSelf: 'center', alignItems: tengah ? 'center' : 'flex-start' }}>
-        <Text style={[styles.teksTim, tengah && styles.rataTengah]}>{namaTim}</Text>
-        <Text style={[styles.subJudul, tengah && styles.subJudulLebar, tengah && styles.rataTengah]}>
-          {subJudul}
-        </Text>
-        <Text style={[styles.judul, tengah && styles.judulLebar, tengah && styles.rataTengah]}>
-          {judul}
-        </Text>
+        {/* ----- TANDA "+" di sudut bawah ----- */}
+        <Text style={[styles.plus, { left: 0, bottom: 0 }]}>+</Text>
+        <Text style={[styles.plus, { left: '32%', bottom: 0 }]}>+</Text>
+        <Text style={[styles.plus, { right: 0, bottom: 0 }]}>+</Text>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  // overflow hidden: kertas yang keluar dari layar/atas dipotong rapi
-  wadah: { width: '100%', overflow: 'hidden', marginBottom: 8 },
-  rataTengah: { textAlign: 'center' },
-  teksTim: { color: WARNA.utama, fontWeight: '700', fontSize: 14, marginBottom: 14 },
-  subJudul: { fontSize: 24, fontStyle: 'italic', color: WARNA.aksen },
-  subJudulLebar: { fontSize: 28 },
-  judul: { fontSize: 38, fontWeight: '900', color: WARNA.teks, letterSpacing: 0.5, lineHeight: 44 },
-  judulLebar: { fontSize: 54, lineHeight: 62 },
+  wadah: { width: '100%', backgroundColor: WARNA.latar, paddingBottom: 18 },
+  plus: { position: 'absolute', fontSize: 14, color: WARNA.teks, fontWeight: '300' },
+  barisAtas: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start',
+    marginTop: 26,
+  },
+  sapaan: { fontSize: 13, fontWeight: '900', letterSpacing: 2, color: WARNA.teks, lineHeight: 17 },
+  logoLuar: {
+    width: 30, height: 30, borderRadius: 15, borderWidth: 3, borderColor: WARNA.teks,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  logoDalam: { width: 10, height: 10, borderRadius: 5, backgroundColor: WARNA.teks },
+  areaJudul: { marginTop: 56, marginBottom: 56, justifyContent: 'center' },
+  batang: { position: 'absolute', backgroundColor: WARNA.aksen },
+  judul: { fontWeight: '900', color: WARNA.teks, textAlign: 'center' },
+  bayangan: { position: 'absolute', left: 0, right: 0, top: 6, opacity: 0.16 },
+  barisBawah: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 22 },
+  kecil: { fontSize: 10, fontWeight: '800', letterSpacing: 2, color: WARNA.teks },
 });

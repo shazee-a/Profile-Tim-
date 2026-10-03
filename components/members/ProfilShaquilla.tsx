@@ -26,9 +26,9 @@ const profil: ProfilAnggota = {
   nama: 'Shaquilla',
   peran: 'Backend Developer', // TODO: ganti dengan peran sebenarnya
   deskripsi:
-    'Tulis deskripsi diri Shaquilla di sini, 2-3 kalimat. Misalnya asal, jurusan, dan tujuan belajar.',
-  hobi: 'Tulis hobi di sini',
-  KeahlianDanFokusProjek: ['Skill 1', 'Skill 2', 'Skill 3'],
+    'Dalam Tim ini saya bertugas disisi backend, bertanggung jawab untuk membuat API dan menghubungkan database dengan aplikasi mobile. Saya juga bertugas untuk membuat dokumentasi API agar memudahkan anggota lain dalam menggunakan API yang saya buat.',
+  hobi: 'Mendengarkan musik, membaca buku, dan bermain gitar',
+  KeahlianDanFokusProjek: ['Backend Development', 'Database Management', 'API Development'],
   foto: require('../../assets/images/shaquilla.png'),
   video: null,
   // video: require('../../assets/videos/shaquilla.mp4'),
