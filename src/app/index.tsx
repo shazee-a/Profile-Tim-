@@ -12,17 +12,27 @@
  *
  * Catatan: alamat import memakai '../../' karena file ini ada di
  * src/app/, sedangkan folder components ada di luar src/.
- *//**
+ /**
  * ============================================================
- * src/app/index.tsx  —  HALAMAN UTAMA (TIDAK TERHALANG LATAR BAWAH)
+ * src/app/index.tsx  —  HALAMAN UTAMA RESPONSIF TANPA PADDING BAWAH
  * ============================================================
  */
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import Header from '../../components/Header';
 import RodaKartu from '../../components/RodaKartu';
 import { WARNA } from '../../components/theme';
 
 export default function Index() {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 600;
+
+  // Helper skala teks responsif berdasarkan lebar layar
+  const skalaTeks = (ukuran: number) => {
+    const rasio = width / 375; // Standard Mobile Baseline (375px)
+    const hasil = Math.round(ukuran * rasio);
+    return Math.max(Math.min(hasil, ukuran * 1.4), ukuran * 0.75);
+  };
+
   return (
     <View style={styles.layar}>
       <ScrollView
@@ -39,14 +49,39 @@ export default function Index() {
         />
 
         {/* ===== RODA KARTU ANGGOTA ===== */}
+        {  /* menurunkan tTEKAN KARTU UNTUK MELIHAT PROFIL dan Dibuat dengan React Native + Expo */}
+
         <View style={styles.areaRoda}>
           <RodaKartu />
+        </View>
 
-          {/* TEKS PETUNJUK MELAYANG (Melayang di atas roda agar tidak memotong kartu) */}
-          <View style={styles.wadahPetunjuk} pointerEvents="none">
-            <Text style={styles.petunjuk}>TEKAN KARTU UNTUK MELIHAT PROFIL</Text>
-            <Text style={styles.kaki}>Dibuat dengan React Native + Expo</Text>
-          </View>
+        {/* ===== TEKS PETUNJUK FOOTER FLEKSIBEL ===== */}
+        <View style={[styles.wadahPetunjuk, { marginTop: isMobile ? 5 : 3 }]}>
+          <Text
+            style={[
+              styles.petunjuk,
+              {
+                fontSize: skalaTeks(10),
+                letterSpacing: isMobile ? 1 : 1,
+                marginTop: isMobile ? 0 : 1,
+              },
+            ]}
+            numberOfLines={1}
+          >
+            TEKAN KARTU UNTUK MELIHAT PROFIL
+          </Text>
+          <Text
+            style={[
+              styles.kaki,
+              {
+                fontSize: skalaTeks(8.5),
+                marginTop: isMobile ? 0 : 1,
+              },
+            ]}
+            numberOfLines={1}
+          >
+            Dibuat dengan React Native + Expo
+          </Text>
         </View>
       </ScrollView>
     </View>
@@ -59,34 +94,28 @@ const styles = StyleSheet.create({
     backgroundColor: WARNA.latar,
   },
   isi: {
-    paddingBottom: 0, // Dibuat 0 agar tidak ada padding bawah yang memotong roda
+    paddingBottom: 0, // Dibuat minimal hanya untuk ruang batas aman teks footer
+    padding: 0,
   },
   areaRoda: {
-    position: 'relative',
     width: '100%',
+    alignItems: 'center',
   },
   wadahPetunjuk: {
-    position: 'absolute',
-    bottom: 12, // Ditaruh di atas area bawah roda tanpa memblokir kartu
-    left: 0,
-    right: 0,
+    width: '100%',
     alignItems: 'center',
-    zIndex: 20,
+    paddingHorizontal: 0,
+    marginTop: 0,
+    zIndex: 30,
   },
   petunjuk: {
     textAlign: 'center',
-    fontSize: 10,
     fontWeight: '800',
-    letterSpacing: 2,
     color: WARNA.teks,
-    textShadowColor: WARNA.latar,
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
   },
   kaki: {
     textAlign: 'center',
     color: WARNA.teksPudar,
-    fontSize: 10,
-    marginTop: 4,
+    fontWeight: '500',
   },
 });
