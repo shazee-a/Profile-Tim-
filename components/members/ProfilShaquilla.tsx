@@ -24,11 +24,16 @@ import MemberDetailModal, { ProfilAnggota } from '../MemberDetailModal';
 // ======================= A. DATA DIRI =======================
 const profil: ProfilAnggota = {
   nama: 'Shaquilla',
-  peran: 'Backend Developer', // TODO: ganti dengan peran sebenarnya
+  peran: 'Database & Backend Stability Specialist', // TODO: ganti dengan peran sebenarnya
   deskripsi:
-    'Dalam Tim ini saya bertugas disisi backend, bertanggung jawab untuk membuat API dan menghubungkan database dengan aplikasi mobile. Saya juga bertugas untuk membuat dokumentasi API agar memudahkan anggota lain dalam menggunakan API yang saya buat.',
+    'Bertanggung jawab penuh dalam merancang dan mengelola arsitektur database, mengoptimalkan penanganan error (error handling) pada backend untuk menjamin stabilitas sistem, serta mengelola framework dan integrasi package library API agar seluruh ekosistem aplikasi berjalan dengan lancar.',
   hobi: 'Mendengarkan musik, membaca buku, dan bermain gitar',
-  KeahlianDanFokusProjek: ['Backend Development', 'Database Management', 'API Development'],
+  KeahlianDanFokusProjek: [
+    'Database Management & Optimization',
+    'Advanced Backend Error Handling',
+    'Framework & API Package Management',
+    'System Reliability & Dependency Control'
+  ],
   foto: require('../../assets/images/shaquilla.png'),
   video: null,
   // video: require('../../assets/videos/shaquilla.mp4'),
