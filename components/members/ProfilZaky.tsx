@@ -17,19 +17,25 @@
  *   - Video : assets/videos/zaky.mp4  (setelah file video ada, hapus tanda //
  *             pada baris "video: require(...)" dan hapus baris "video: null")
  */
-import { useState } from 'react';
-import MemberCard from '../MemberCard';
-import MemberDetailModal, { ProfilAnggota } from '../MemberDetailModal';
+import { useState } from "react";
+import MemberCard from "../MemberCard";
+import MemberDetailModal, { ProfilAnggota } from "../MemberDetailModal";
 
 // ======================= A. DATA DIRI =======================
 const profil: ProfilAnggota = {
-  nama: 'Zaky',
-  peran: 'Peran Zaky', // TODO: ganti dengan peran sebenarnya
+  nama: "Zaky",
+  peran: "Front-End Developer", // TODO: ganti dengan peran sebenarnya
   deskripsi:
-    'Tulis deskripsi diri Zaky di sini, 2-3 kalimat. Misalnya asal, jurusan, dan tujuan belajar.',
-  hobi: 'Tulis hobi di sini',
-  KeahlianDanFokusProjek: ['Skill 1', 'Skill 2', 'Skill 3'],
-  foto: require('../../assets/images/zaky.png'),
+    "Mahasiswa Informatika angkatan 2024 di Universitas Al Azhar Indonesia yang berfokus pada pengembangan antarmuka aplikasi web dan mobile yang intuitif, responsif, serta menarik secara visual.",
+  hobi: "Olahraga, Mendengarkan musik, Bermain musik dan Bermain Game", // TODO: ganti dengan hobi sebenarnya
+  KeahlianDanFokusProjek: [
+    "React Native & Expo",
+    "React.js & Tailwind CSS",
+    "UI/UX Design Implementation",
+    "JavaScript / TypeScript",
+    "Frontend Integration",
+  ],
+  foto: require("../../assets/images/zaky.png"),
   video: null,
   // video: require('../../assets/videos/zaky.mp4'),
 };
