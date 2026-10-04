@@ -35,7 +35,7 @@ const profil: ProfilAnggota = {
     "JavaScript / TypeScript",
     "Frontend Integration",
   ],
-  foto: require("../../assets/images/zaky.png"),
+  foto: require("../../assets/images/Zaky.png"),
   video: null,
   // video: require('../../assets/videos/zaky.mp4'),
 };

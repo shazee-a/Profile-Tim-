@@ -32,7 +32,7 @@ const profil: ProfilAnggota = {
     'Pengembangan Komponen UI & Layouting',
     'Optimasi User Experience (UX) Aplikasi'
   ],
-  foto: require('../../assets/images/zain.png'),
+  foto: require('../../assets/images/Zain.png'),
   video: null,
   // video: require('../../assets/videos/zain.mp4'),
 };
