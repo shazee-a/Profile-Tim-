@@ -23,12 +23,17 @@ import MemberDetailModal, { ProfilAnggota } from '../MemberDetailModal';
 
 // ======================= A. DATA DIRI =======================
 const profil: ProfilAnggota = {
-  nama: 'Fadli',
-  peran: 'Backend Developer', // TODO: ganti dengan peran sebenarnya
+  nama: 'Fadli Ghafatul Hijriah',
+  peran: 'Backend & AI Lead',
   deskripsi:
-    'Dalam Group ini saya bertugas disisi backend, bertanggung jawab untuk membuat API dan menghubungkan database dengan aplikasi mobile. Saya juga bertugas untuk membuat dokumentasi API agar memudahkan anggota lain dalam menggunakan API yang saya buat.',
-  hobi: 'Tulis hobi di sini',
-  KeahlianDanFokusProjek: ['Skill 1', 'Skill 2', 'Skill 3'],
+    'Bertanggung jawab merancang arsitektur backend, membangun API, serta mengintegrasikan solusi AI ke dalam aplikasi. Selain itu, saya juga Memastikan proyek selesai tepat waktu dan Membantu tim menerapkan kerangka kerja Agile/Scrum.',
+  hobi: 'Makan, Main Game, Main Gitar',
+  KeahlianDanFokusProjek: [
+    'Backend & REST API Design',
+    'AI & Machine Learning Integration',
+    'Git & Version Control Management',
+    'System Architecture & Refactoring',
+  ],
   foto: require('../../assets/images/fadli.png'),
   video: null,
   // video: require('../../assets/videos/fadli.mp4'),
