@@ -37,8 +37,8 @@ export default function Header({ sapaan, judul, kiriBawah, kananBawah }: HeaderP
   const insets = useSafeAreaInsets();               // tinggi status bar di HP (0 di web)
 
   // lebar area isi; judul memakai 94% darinya (ukuran huruf dihitung otomatis)
-  const lebarIsi = Math.min(width - UKURAN.jarak * 2, 1100);
-  const { tinggi: tinggiJudul } = ukuranJudul(judul, lebarIsi * 0.94);
+  const lebarIsi = Math.min(width - UKURAN.jarak * 10, 2900);
+  const { tinggi: tinggiJudul } = ukuranJudul(judul, lebarIsi * 1.3);
 
   return (
     <View style={[styles.wadah, { paddingTop: insets.top + 20 }]}>
@@ -63,11 +63,11 @@ export default function Header({ sapaan, judul, kiriBawah, kananBawah }: HeaderP
           <View
             style={[
               styles.batang,
-              { width: lebarIsi * 0.17, height: tinggiJudul + 84, top: -42, left: lebarIsi * 0.415 },
+              { width: lebarIsi * 0.07, height: tinggiJudul + 66, top: -35, left: lebarIsi * 0.468 },
             ]}
           />
           {/* Judul bergelombang */}
-          <JudulGelombang teks={judul} lebarTotal={lebarIsi * 0.94} warna={WARNA.teks} />
+          <JudulGelombang teks={judul} lebarTotal={lebarIsi * 1.3} warna={WARNA.teks} />
         </View>
 
         {/* ----- BARIS BAWAH: dua teks kecil ----- */}

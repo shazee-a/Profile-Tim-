@@ -1,6 +1,6 @@
 /**
  * ============================================================
- * RodaKartu.tsx  —  RODA KARTU SETENGAH LINGKARAN DENGAN SPACING RESPONSIF
+ * components/RodaKartu.tsx — PERBAIKAN PADDING BAWAH RAPAT & PRESISI
  * ============================================================
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -26,30 +26,25 @@ const keRadian = (derajat: number) => (derajat * Math.PI) / 180;
 
 export default function RodaKartu() {
   const { width: lebarLayar } = useWindowDimensions();
-  const { lebarKartu, tinggiKartu, sudutAntar, radius } = ukuranRoda(lebarLayar);
+  const { lebarKartu, tinggiKartu, sudutAntar, radius, isMobile } = ukuranRoda(lebarLayar);
 
-  const isMobile = lebarLayar < 600;
-
-  // ---------- ANIMASI PUTAR INFINITE ----------
+  // ---------- ANIMASI PUTAR ----------
   const putar = useRef(new Animated.Value(0)).current;
   const [aktif, setAktif] = useState(0);
 
   useEffect(() => {
     const isWeb = Platform.OS === 'web';
 
-    const jalankanAnimasi = () => {
-      putar.setValue(0);
-      Animated.loop(
-        Animated.timing(putar, {
-          toValue: 360,
-          duration: DURASI,
-          easing: Easing.linear,
-          useNativeDriver: !isWeb,
-        })
-      ).start();
-    };
+    const animasi = Animated.loop(
+      Animated.timing(putar, {
+        toValue: 360,
+        duration: DURASI,
+        easing: Easing.linear,
+        useNativeDriver: !isWeb,
+      })
+    );
 
-    jalankanAnimasi();
+    animasi.start();
 
     const listenerId = putar.addListener(({ value }) => {
       const nomorKartu = Math.round(-value / sudutAntar);
@@ -59,23 +54,23 @@ export default function RodaKartu() {
 
     return () => {
       putar.removeListener(listenerId);
-      putar.stopAnimation();
+      animasi.stop();
     };
-  }, [putar, sudutAntar]);
+  }, [sudutAntar]);
 
-  // ---------- GEOMETRI RODA ----------
+  // ---------- GEOMETRI RODA PRESISI TANPA PADDING RUANG KOSONG ----------
   const diagonal = Math.hypot(lebarKartu, tinggiKartu);
   const D = Math.ceil(2 * (radius + diagonal / 2)) + 10;
   const tengah = D / 2;
 
-  const MARGIN_ATAS = isMobile ? 8 : 12;
+  const MARGIN_ATAS = isMobile ? 4 : 8;
   const pusatY = MARGIN_ATAS + tinggiKartu / 2 + radius;
 
-  // TINGGI SEKSI: Menyesuaikan agar batas potongan roda pas dan memberikan ruang untuk penunjuk nama
-  const tinggiSeksi = MARGIN_ATAS + tinggiKartu + (radius * (isMobile ? 0.10 : 0.14)) + (isMobile ? 18 : 26);
+  // KUNCI PERBAIKAN: Hapus pengali radius! Kunci tinggi seksi murni dari tinggi kartu + pil penunjuk
+  const tinggiSeksi = MARGIN_ATAS + tinggiKartu + (isMobile ? 28 : 36);
 
   // ---------- CINCIN TULISAN MELINGKAR ----------
-  const radiusTeks = Math.max(30, radius - tinggiKartu / 2 - (isMobile ? 30 : 45));
+  const radiusTeks = Math.max(30, radius - tinggiKartu / 2 - (isMobile ? 20 : 32));
   const hurufCincin = useMemo(() => {
     if (radiusTeks < 30) return [];
     const total = Math.floor((2 * Math.PI * radiusTeks) / 10.5);
@@ -149,12 +144,12 @@ export default function RodaKartu() {
       <View
         style={[
           styles.penunjuk,
-          { top: MARGIN_ATAS + tinggiKartu + (isMobile ? 2 : 6), pointerEvents: 'none' },
+          { top: MARGIN_ATAS + tinggiKartu + 2, pointerEvents: 'none' },
         ]}
       >
-        <Text style={[styles.segitiga, isMobile && { fontSize: 10, lineHeight: 11 }]}>▲</Text>
-        <View style={[styles.pil, isMobile && { paddingVertical: 2, paddingHorizontal: 10 }]}>
-          <Text style={[styles.teksPil, isMobile && { fontSize: 10, letterSpacing: 1 }]}>
+        <Text style={[styles.segitiga, isMobile && { fontSize: 9, lineHeight: 10 }]}>▲</Text>
+        <View style={[styles.pil, isMobile && { paddingVertical: 2, paddingHorizontal: 8 }]}>
+          <Text style={[styles.teksPil, isMobile && { fontSize: 9, letterSpacing: 0.8 }]}>
             {ANGGOTA[aktif].nama.toUpperCase()}
           </Text>
         </View>
@@ -166,12 +161,12 @@ export default function RodaKartu() {
 const styles = StyleSheet.create({
   seksi: {
     width: '100%',
-    overflow: 'hidden', // Memotong setengah bagian bawah kartu secara rapi
+    overflow: 'hidden', // Memotong busur bagian bawah secara presisi di batas indikator nama
     position: 'relative',
     zIndex: 1,
   },
   hurufCincin: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '800',
     color: '#A3A3A3',
   },
@@ -183,21 +178,21 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   segitiga: {
-    fontSize: 12,
+    fontSize: 11,
     color: WARNA.teks,
-    lineHeight: 14,
+    lineHeight: 12,
   },
   pil: {
     backgroundColor: WARNA.utama,
-    paddingVertical: 4,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    marginTop: 2,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    marginTop: 1,
   },
   teksPil: {
     color: WARNA.teksPutih,
     fontWeight: '900',
-    fontSize: 11,
-    letterSpacing: 1.5,
+    fontSize: 10,
+    letterSpacing: 1.2,
   },
 });
