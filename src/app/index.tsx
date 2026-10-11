@@ -1,36 +1,38 @@
 /**
  * ============================================================
- * src/app/index.tsx — FIXED SHELL LAYOUT (HEADER & FOOTER FIXED, BODY SCROLLABLE)
+ * src/app/index.tsx — GRADIENT BACKGROUND & DYNAMIC SHELL
  * ============================================================
  */
-import { useEffect, useState } from 'react';
-import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
-import Header from '../../components/Header';
-import RodaKartu from '../../components/RodaKartu';
-import { WARNA } from '../../components/theme';
-
-// Contoh Data Menu/Konten Body
-const DAFTAR_MENU = [
-  { id: '1', judul: 'Luas Segitiga', deskripsi: 'Menghitung luas segitiga' },
-  { id: '2', judul: 'Luas Tabung', deskripsi: 'Menghitung luas tabung' },
-  { id: '3', judul: 'Luas Persegi', deskripsi: 'Menghitung luas persegi' },
-  { id: '4', judul: 'Luas Lingkaran', deskripsi: 'Menghitung luas lingkaran' },
-];
+import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useState } from "react";
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import Header from "../../components/Header";
+import MenuRumus from "../../components/MenuRumus";
+import RodaKartu from "../../components/RodaKartu";
+import { WARNA } from "../../components/theme";
 
 export default function Index() {
   const { width } = useWindowDimensions();
   const isMobile = width <= 450;
-  const isTablet = width <= 758;
 
   // State untuk Tab Navigasi Footer
-  const [tabAktif, setTabAktif] = useState<'profil' | 'proyek' | 'info'>('profil');
+  const [tabAktif, setTabAktif] = useState<"profil" | "proyek" | "info">(
+    "profil",
+  );
 
-  // Pasang CSS Global untuk mengunci height body web agar tidak ada scrollbar browser luar
   useEffect(() => {
-    if (Platform.OS === 'web' && typeof document !== 'undefined') {
-      const idGaya = 'media-queries-portofolio';
+    if (Platform.OS === "web" && typeof document !== "undefined") {
+      const idGaya = "media-queries-portofolio";
       if (!document.getElementById(idGaya)) {
-        const styleEl = document.createElement('style');
+        const styleEl = document.createElement("style");
         styleEl.id = idGaya;
         styleEl.innerHTML = `
           html, body, #root {
@@ -38,7 +40,7 @@ export default function Index() {
             margin: 0 !important;
             padding: 0 !important;
             overflow: hidden !important;
-            background-color: ${WARNA.latar} !important;
+            background-color: transparent !important;
           }
         `;
         document.head.appendChild(styleEl);
@@ -47,65 +49,106 @@ export default function Index() {
   }, []);
 
   return (
-    <View style={styles.layarUtama}>
-      {/* 1. HEADER FIXED (TETAP DI ATAS) */}
-      <View style={styles.wadahHeaderFixed}>
-        <Header
-          sapaan={'WELCOME\nTO OUR TEAM'}
-          judul="INFINIPAGE"
-          kiriBawah="KELOMPOK 5"
-          kananBawah="PEMROGRAMAN MOBILE"
-        />
-      </View>
+    <LinearGradient
+      colors={["#0f2027", "#203a43", "#2c5364"]}
+      style={styles.layarUtama}
+    >
+      {/* 1. HEADER DILAPIS KONDISI: Cuma muncul saat tab PROFIL aktif */}
+      {tabAktif === "profil" && (
+        <View style={styles.wadahHeaderFixed}>
+          <Header
+            sapaan={"WELCOME\nTO OUR TEAM"}
+            judul="INFINIPAGE"
+            kiriBawah="KELOMPOK 5"
+            kananBawah="PEMROGRAMAN MOBILE"
+          />
+        </View>
+      )}
 
-      {/* 2. BODY KONTEN MENU (BISA DI-SCROLL DI TENGAH) */}
+      {/* 2. BODY KONTEN */}
       <View style={styles.areaBodyScroll}>
         <ScrollView
           contentContainerStyle={styles.isiScroll}
           showsVerticalScrollIndicator={false}
         >
-          {DAFTAR_MENU.map((item) => (
-            <View key={item.id} style={styles.kartuMenu}>
-              <Text style={styles.judulMenu}>{item.judul}</Text>
-              <Text style={styles.deskripsiMenu}>{item.deskripsi}</Text>
+          {tabAktif === "proyek" && (
+            <View
+              style={{ width: "100%", alignItems: "center", paddingTop: 10 }}
+            >
+              <MenuRumus />
             </View>
-          ))}
+          )}
+
+          {tabAktif === "info" && (
+            <View style={styles.kartuMenu}>
+              <Text style={styles.judulMenu}>ABOUT US - KELOMPOK 5</Text>
+              <Text style={styles.deskripsiMenu}>
+                Aplikasi Portofolio Tim & Praktikum Pemrograman Mobile berbasis
+                React Native & Expo.
+              </Text>
+            </View>
+          )}
         </ScrollView>
       </View>
 
-      {/* 3. KELOMPOK BAWAH FIXED (RODA KARTU + NAVIGASI FOOTER ATTACHED) */}
+      {/* 3. KELOMPOK BAWAH FIXED */}
       <View style={styles.wadahBawahFixed}>
-        {/* RODA KARTU MEMBER (NATIVE ANCHOR) */}
-        <View style={styles.areaRoda}>
-          <RodaKartu />
-        </View>
+        {tabAktif === "profil" && (
+          <View style={styles.areaRoda}>
+            <RodaKartu />
+          </View>
+        )}
 
-        {/* NAVIGASI FOOTER (TOMBOL TAB MENU) */}
+        {/* NAVIGASI FOOTER */}
         <View style={styles.footerNavigasi}>
           <View style={styles.barisTombolTab}>
             <TouchableOpacity
-              style={[styles.tombolTab, tabAktif === 'profil' && styles.tombolTabAktif]}
-              onPress={() => setTabAktif('profil')}
+              style={[
+                styles.tombolTab,
+                tabAktif === "profil" && styles.tombolTabAktif,
+              ]}
+              onPress={() => setTabAktif("profil")}
             >
-              <Text style={[styles.teksTab, tabAktif === 'profil' && styles.teksTabAktif]}>
+              <Text
+                style={[
+                  styles.teksTab,
+                  tabAktif === "profil" && styles.teksTabAktif,
+                ]}
+              >
                 MEMBER PROFILES
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.tombolTab, tabAktif === 'proyek' && styles.tombolTabAktif]}
-              onPress={() => setTabAktif('proyek')}
+              style={[
+                styles.tombolTab,
+                tabAktif === "proyek" && styles.tombolTabAktif,
+              ]}
+              onPress={() => setTabAktif("proyek")}
             >
-              <Text style={[styles.teksTab, tabAktif === 'proyek' && styles.teksTabAktif]}>
+              <Text
+                style={[
+                  styles.teksTab,
+                  tabAktif === "proyek" && styles.teksTabAktif,
+                ]}
+              >
                 PROJECTS
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.tombolTab, tabAktif === 'info' && styles.tombolTabAktif]}
-              onPress={() => setTabAktif('info')}
+              style={[
+                styles.tombolTab,
+                tabAktif === "info" && styles.tombolTabAktif,
+              ]}
+              onPress={() => setTabAktif("info")}
             >
-              <Text style={[styles.teksTab, tabAktif === 'info' && styles.teksTabAktif]}>
+              <Text
+                style={[
+                  styles.teksTab,
+                  tabAktif === "info" && styles.teksTabAktif,
+                ]}
+              >
                 ABOUT US
               </Text>
             </TouchableOpacity>
@@ -116,83 +159,79 @@ export default function Index() {
           </Text>
         </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
+// POSISI DEKLARASI STYLES DI PALING BAWAH DI LUAR FUNGSI Index()
 const styles = StyleSheet.create({
   layarUtama: {
     flex: 1,
-    height: '100%',
-    backgroundColor: WARNA.latar,
-    justifyContent: 'space-between',
-    overflow: 'hidden',
+    height: "100%",
+    backgroundColor: "transparent",
+    justifyContent: "space-between",
+    overflow: "hidden",
   },
   wadahHeaderFixed: {
-    width: '100%',
+    width: "100%",
     flexShrink: 0,
     zIndex: 20,
-    backgroundColor: WARNA.latar,
+    backgroundColor: "transparent",
   },
   areaBodyScroll: {
-    flex: 1, // Mengisi ruang kosong tengah untuk menu scrollable
-    width: '100%',
+    flex: 1,
+    width: "100%",
     paddingHorizontal: 20,
     marginVertical: 4,
   },
   isiScroll: {
     paddingVertical: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   kartuMenu: {
-    width: '100%',
+    width: "100%",
     maxWidth: 680,
-    backgroundColor: '#FFFFFF',
-    padding: 14,
+    backgroundColor: "#FFFFFF",
+    padding: 16,
     borderRadius: 12,
-    marginBottom: 10,
+    marginVertical: 10,
     borderWidth: 1,
-    borderColor: '#E5E5E5',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    borderColor: "#E5E5E5",
   },
   judulMenu: {
-    fontSize: 13,
-    fontWeight: '800',
+    fontSize: 14,
+    fontWeight: "800",
     color: WARNA.teks,
-    marginBottom: 4,
+    marginBottom: 6,
     letterSpacing: 0.8,
   },
   deskripsiMenu: {
-    fontSize: 11,
+    fontSize: 12,
     color: WARNA.teksPudar,
-    lineHeight: 15,
+    lineHeight: 16,
   },
   wadahBawahFixed: {
-    width: '100%',
+    width: "100%",
     flexShrink: 0,
-    alignItems: 'center',
-    backgroundColor: WARNA.latar,
+    alignItems: "center",
+    backgroundColor: "transparent",
     zIndex: 10,
   },
   areaRoda: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   footerNavigasi: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingBottom: 12,
     paddingTop: 4,
-    backgroundColor: WARNA.latar,
+    backgroundColor: "transparent",
   },
   barisTombolTab: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
     marginBottom: 6,
   },
@@ -201,24 +240,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: WARNA.teks,
-    backgroundColor: 'transparent',
+    borderColor: "#FFFFFF",
+    backgroundColor: "transparent",
   },
   tombolTabAktif: {
-    backgroundColor: WARNA.teks,
+    backgroundColor: "#FFFFFF",
   },
   teksTab: {
     fontSize: 9,
-    fontWeight: '800',
-    color: WARNA.teks,
+    fontWeight: "800",
+    color: "#FFFFFF",
     letterSpacing: 1,
   },
   teksTabAktif: {
-    color: WARNA.latar,
+    color: "#0f2027",
   },
   kakiTeks: {
-    textAlign: 'center',
-    color: WARNA.teksPudar,
-    fontWeight: '500',
+    textAlign: "center",
+    color: "#A1A1AA",
+    fontWeight: "500",
   },
 });
