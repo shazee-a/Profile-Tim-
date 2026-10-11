@@ -35,8 +35,7 @@ const profil: ProfilAnggota = {
     'System Reliability & Dependency Control'
   ],
   foto: require('../../assets/images/shaquilla.png'),
-  video: null,
-  // video: require('../../assets/videos/shaquilla.mp4'),
+  video: require('../../assets/video/Shaquilla_Video.mp4'),
 };
 
 // ======================= B + C. TOMBOL & TAMPILAN =======================
