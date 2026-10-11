@@ -35,8 +35,7 @@ const profil: ProfilAnggota = {
     'System Architecture & Refactoring',
   ],
   foto: require('../../assets/images/fadli.png'),
-  video: null,
-  // video: require('../../assets/videos/fadli.mp4'),
+  video: require('../../assets/video/Fadli_Video.mp4'),
 };
 
 // ======================= B + C. TOMBOL & TAMPILAN =======================

@@ -30,11 +30,22 @@ export default function VideoPlayer({ sumber }: VideoPlayerProps) {
       player={player}
       style={styles.video}
       nativeControls      // tombol putar/jeda/geser bawaan
-      allowsFullscreen    // boleh layar penuh
     />
   );
 }
 
 const styles = StyleSheet.create({
-  video: { width: '100%', height: 200, borderRadius: 12, backgroundColor: '#000' },
+  wrapper: {
+    width: '100%',
+    alignItems: 'center',
+    backgroundColor: '#000',
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  video: {
+    width: '100%',
+    maxWidth: 360,
+    height: 360,
+    backgroundColor: '#000',
+  },
 });
