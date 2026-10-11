@@ -22,8 +22,8 @@ import {
   Image, ImageSourcePropType, Modal, Pressable,
   ScrollView, StyleSheet, Text, View,
 } from 'react-native';
-import VideoPlayer from './VideoPlayer';
 import { WARNA } from './theme';
+import VideoPlayer from './VideoPlayer';
 
 /** Bentuk data yang WAJIB diisi tiap anggota */
 export type ProfilAnggota = {

@@ -11,7 +11,7 @@ export const WARNA = {
   utama: "#0B0B0B", // hitam (teks utama, tombol, label)
   utamaGelap: "#000000", // hitam pekat
   aksen: "#FF1236", // merah menyala (batang merah, tag, ikon)
-  latar: "#4de6e3", // abu-abu muda (latar halaman)
+  latar: "#ccd8dd", // abu-abu muda (latar halaman)
   kartu: "#FFFFFF", // putih (bingkai kartu, pop-up)
   kertas: "#FFFFFF", // (cadangan, tidak dipakai lagi)
   teks: "#0B0B0B", // teks utama

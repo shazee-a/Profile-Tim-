@@ -37,10 +37,10 @@ export default function MemberCard({ foto, nama, peran, onPress }: MemberCardPro
     >
       {/* WADAH FOTO FLEKSIBEL: Menjaga posisi foto tetap pas & simetris di tengah kartu */}
       <View style={styles.wadahFoto}>
-        <Image 
-          source={typeof foto === 'string' ? { uri: foto } : foto} 
-          resizeMode="cover" 
-          style={styles.foto} 
+        <Image
+          source={typeof foto === 'string' ? { uri: foto } : foto}
+          resizeMode="cover"
+          style={styles.foto}
         />
       </View>
 
@@ -79,30 +79,30 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   bilah: {
-    position: 'absolute', 
-    left: 0, 
-    right: 0, 
+    position: 'absolute',
+    left: 0,
+    right: 0,
     bottom: 0,
     backgroundColor: 'rgba(11,11,11,0.85)',
-    paddingVertical: 8, 
+    paddingVertical: 8,
     paddingHorizontal: 10,
     zIndex: 5,
   },
-  nama: { 
-    color: WARNA.teksPutih, 
-    fontWeight: '900', 
-    letterSpacing: 1 
+  nama: {
+    color: WARNA.teksPutih,
+    fontWeight: '900',
+    letterSpacing: 1
   },
-  barisPeran: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    gap: 5, 
-    marginTop: 2 
+  barisPeran: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    marginTop: 2
   },
-  teksPeran: { 
-    flexShrink: 1, 
-    color: '#DADADA', 
-    fontSize: 11, 
-    fontWeight: '600' 
+  teksPeran: {
+    flexShrink: 1,
+    color: '#DADADA',
+    fontSize: 11,
+    fontWeight: '600'
   },
 });
