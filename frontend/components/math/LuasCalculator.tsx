@@ -211,7 +211,7 @@ export default function LuasCalculator() {
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.btnText}>Hitung via API</Text>
+                <Text style={styles.btnText}>Hitung</Text>
               )}
             </TouchableOpacity>
 

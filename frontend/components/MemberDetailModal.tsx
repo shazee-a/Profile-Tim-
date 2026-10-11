@@ -91,7 +91,7 @@ export default function MemberDetailModal({ tampil, onTutup, profil }: Props) {
             </View>
 
             {/* ---------- UNSUR VIDEO ---------- */}
-            <Text style={styles.label}>Video Perkenalan</Text>
+            <Text style={styles.label}>Video</Text>
             {profil.video ? (
               <VideoPlayer sumber={profil.video} />
             ) : (
