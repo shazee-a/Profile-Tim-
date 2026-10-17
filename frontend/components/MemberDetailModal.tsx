@@ -1,31 +1,21 @@
 /**
  * ============================================================
- * MemberDetailModal.tsx  —  POP-UP DETAIL PROFIL (DI TENGAH LAYAR)
+ * MemberDetailModal.tsx — POP-UP DETAIL PROFIL (DI TENGAH LAYAR)
  * ============================================================
- * Muncul saat tombol "Lihat Profil" ditekan. Berupa kartu putih
- * di tengah layar dengan latar belakang gelap transparan.
- * Isinya menampilkan ketiga unsur tugas:
- *   1. GAMBAR : foto
- *   2. TEKS   : nama, peran, deskripsi diri, hobi, skill
- *   3. VIDEO  : video perkenalan (jika sudah tersedia)
- *
- * Cara menutup pop-up:
- *   - tekan tombol "Tutup", atau
- *   - tekan area gelap di luar kartu putih.
- *
- * Props:
- *  - tampil   : true = pop-up terbuka, false = tertutup
- *  - onTutup  : fungsi untuk menutup pop-up
- *  - profil   : objek data anggota (lihat tipe ProfilAnggota)
  */
 import {
-  Image, ImageSourcePropType, Modal, Pressable,
-  ScrollView, StyleSheet, Text, View,
+  Image,
+  ImageSourcePropType,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import { WARNA } from './theme';
 import VideoPlayer from './VideoPlayer';
 
-/** Bentuk data yang WAJIB diisi tiap anggota */
 export type ProfilAnggota = {
   nama: string;
   peran: string;
@@ -33,7 +23,7 @@ export type ProfilAnggota = {
   hobi: string;
   KeahlianDanFokusProjek: string[];
   foto: ImageSourcePropType;
-  video: number | null; // isi null jika video belum ada
+  video: number | null;
 };
 
 type Props = {
@@ -42,19 +32,17 @@ type Props = {
   profil: ProfilAnggota;
 };
 
-// Warna teks di dalam kartu putih. Dibuat tetap (gelap) supaya
-// selalu terbaca jelas di atas putih, apa pun tema yang dipilih.
 const TEKS_GELAP = '#222222';
 const TEKS_PUDAR = '#666666';
 
 export default function MemberDetailModal({ tampil, onTutup, profil }: Props) {
   return (
     <Modal
-      visible={tampil}
-      transparent                 // latar modal tembus pandang (bukan layar penuh)
-      animationType="fade"        // muncul perlahan
-      statusBarTranslucent        // Android: gelapnya sampai ke status bar
-      onRequestClose={onTutup}    // tombol Back di Android menutup pop-up
+      visible={tampil} // Fixed: disesuaikan dengan prop 'tampil'
+      transparent={true}
+      animationType="fade"
+      onRequestClose={onTutup} // Fixed: disesuaikan dengan prop 'onTutup'
+      statusBarTranslucent={true}
     >
       {/* LAPISAN GELAP: memenuhi layar dan menengahkan kartu */}
       <View style={styles.latarGelap}>
@@ -99,7 +87,7 @@ export default function MemberDetailModal({ tampil, onTutup, profil }: Props) {
             )}
           </ScrollView>
 
-          {/* TOMBOL TUTUP (tetap terlihat di bawah kartu) */}
+          {/* TOMBOL TUTUP */}
           <Pressable
             style={({ pressed }) => [styles.tombolTutup, pressed && { opacity: 0.8 }]}
             onPress={onTutup}
@@ -113,15 +101,14 @@ export default function MemberDetailModal({ tampil, onTutup, profil }: Props) {
 }
 
 const styles = StyleSheet.create({
-  // Latar gelap transparan; alignItems + justifyContent = kartu di TENGAH
   latarGelap: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.55)',
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    zIndex: 10000, // Memastikan modal selalu di atas Floating Navbar
   },
-  // Kartu putih. maxHeight membatasi tinggi, isi yang panjang bisa digulir
   kartu: {
     width: '100%',
     maxWidth: 420,
@@ -129,20 +116,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 16,
+    zIndex: 10001,
   },
   gulir: { flexGrow: 0 },
   isi: { paddingBottom: 8 },
   foto: {
     width: 160,
-    height: 213,               // perbandingan 3:4
+    height: 213,
     borderRadius: 14,
     alignSelf: 'center',
     marginBottom: 14,
   },
   nama: { fontSize: 24, fontWeight: '800', color: TEKS_GELAP, textAlign: 'center' },
   peran: {
-    fontSize: 14, fontWeight: '600', color: WARNA.utama,
-    textAlign: 'center', marginBottom: 6,
+    fontSize: 14,
+    fontWeight: '600',
+    color: WARNA.utama,
+    textAlign: 'center',
+    marginBottom: 6,
   },
   label: { fontSize: 15, fontWeight: '700', color: WARNA.utama, marginTop: 14, marginBottom: 4 },
   teks: { fontSize: 14, lineHeight: 21, color: TEKS_GELAP },
@@ -150,7 +141,9 @@ const styles = StyleSheet.create({
   baris: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   lencana: {
     backgroundColor: WARNA.garis,
-    paddingVertical: 5, paddingHorizontal: 12, borderRadius: 16,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    borderRadius: 16,
   },
   teksLencana: { color: TEKS_GELAP, fontWeight: '600', fontSize: 13 },
   tombolTutup: {

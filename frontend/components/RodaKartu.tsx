@@ -66,7 +66,6 @@ export default function RodaKartu() {
   const MARGIN_ATAS = isMobile ? 4 : 8;
   const pusatY = MARGIN_ATAS + tinggiKartu / 2 + radius;
 
-  // KUNCI PERBAIKAN: Hapus pengali radius! Kunci tinggi seksi murni dari tinggi kartu + pil penunjuk
   const tinggiSeksi = MARGIN_ATAS + tinggiKartu + (isMobile ? 28 : 36);
 
   // ---------- CINCIN TULISAN MELINGKAR ----------
